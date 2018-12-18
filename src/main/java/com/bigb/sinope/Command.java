@@ -1,9 +1,24 @@
 package com.bigb.sinope;
 
+/**
+ * Interface describing all the Sinope commands sent and received.  
+ * 
+ * @author Francis Beaule
+ *
+ */
 public interface Command {
-	String getName();
-	
-	int getCommandId();
-	
-	int getPayloadSize();
+    /**
+     * @return The command name for logging and answer purpose.
+     */
+    String getName();
+
+    /**
+     * @return The command identification unsigned short.
+     */
+    int getCommandId();
+
+    /**
+     * @return The command payload size unsigned short.
+     */
+    int getPayloadSize();
 }
