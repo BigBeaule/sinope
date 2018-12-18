@@ -1,5 +1,8 @@
 package com.bigb.sinope;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Base implementation of a {@link Command}.
  * 
@@ -7,6 +10,11 @@ package com.bigb.sinope;
  *
  */
 public abstract class AbstractCommand implements Command {
+    /**
+     * The logger.
+     */
+    protected static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
+    
     /**
      * The command name for logging and answer purpose.
      */
@@ -20,9 +28,9 @@ public abstract class AbstractCommand implements Command {
     }
 
     /**
-     * @return The size of the payload data.
+     * @return The unsigned short size of the payload data.
      */
-    protected abstract short getDataSize();
+    protected abstract int getDataSize();
 
     @Override
     public final String getName() {

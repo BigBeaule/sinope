@@ -16,4 +16,9 @@ public interface SinopeConstants {
      * The frame control which is always the second byte of a request and answer.
      */
     byte FRAME_CTRL = 0x00;
+    
+    /**
+     * The status field often present in Sinope answers.
+     */
+    String STATUS = "status";
 }

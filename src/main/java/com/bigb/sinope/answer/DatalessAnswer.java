@@ -1,8 +1,8 @@
 package com.bigb.sinope.answer;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import javax.json.JsonObjectBuilder;
+import com.bigb.sinope.SinopeDataInputStream;
 
 /**
  * Answers that doesn't contains any application data.
@@ -36,12 +36,12 @@ public final class DatalessAnswer extends AbstractAnswer {
     }
 
     @Override
-    protected short getDataSize() {
+    protected int getDataSize() {
         return 0;
     }
 
     @Override
-    public void readAnswer(DataInputStream stream, JsonObjectBuilder json) throws IOException {
+    public void readAnswer(SinopeDataInputStream stream, JsonObjectBuilder json) throws IOException {
         // Nothing to read
     }
 }

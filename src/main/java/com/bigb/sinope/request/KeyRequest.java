@@ -17,10 +17,18 @@ public class KeyRequest extends AbstractRequest {
     private final BigInteger gatewayId;
 
     /**
-     * @param gatewayId The unsigned long gateway ID
+     * @param gatewayId The unsigned long gateway ID.
      */
     public KeyRequest(String gatewayId) {
-        super("Authentication Key");
+        this("Authentication Key", gatewayId);
+    }
+
+    /**
+     * @param name The name of the request.
+     * @param gatewayId The unsigned long gateway ID.
+     */
+    protected KeyRequest(String name, String gatewayId) {
+        super(name);
         this.gatewayId = new BigInteger(gatewayId, 16);
     }
 
@@ -30,7 +38,7 @@ public class KeyRequest extends AbstractRequest {
     }
 
     @Override
-    protected short getDataSize() {
+    protected int getDataSize() {
         return 8;
     }
 

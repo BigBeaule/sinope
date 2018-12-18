@@ -34,7 +34,7 @@ public final class DatalessRequest extends AbstractRequest {
     }
 
     @Override
-    protected short getDataSize() {
+    protected int getDataSize() {
         return 0;
     }
 

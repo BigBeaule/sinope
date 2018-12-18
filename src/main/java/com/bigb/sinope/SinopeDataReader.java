@@ -2,7 +2,6 @@ package com.bigb.sinope;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +10,8 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import com.bigb.sinope.answer.CommandAnswer;
 import com.bigb.sinope.answer.DatalessAnswer;
+import com.bigb.sinope.answer.KeyAnswer;
+import com.bigb.sinope.answer.LoginAnswer;
 
 /**
  * Reader for Sinope answers.
@@ -28,6 +29,8 @@ public class SinopeDataReader {
      * @throws SinopeBadFormatException Format error.
      */
     public static JsonObject read(DataInputStream stream) throws IOException, SinopeBadFormatException {
+        SinopeDataInputStream sinopeStream = new SinopeDataInputStream(stream);
+
         /*-
          Command message content is:
          Preamble: 		0x55
@@ -37,15 +40,15 @@ public class SinopeDataReader {
          Data: 			X bytes
          CRC: 			1 byte
         */
-        if (stream.readByte() != SinopeConstants.PREAMBLE) {
+        if (sinopeStream.readByte() != SinopeConstants.PREAMBLE) {
             throw SinopeBadFormatException.MISSING_PREAMBLE;
         }
-        if (stream.readByte() != SinopeConstants.FRAME_CTRL) {
+        if (sinopeStream.readByte() != SinopeConstants.FRAME_CTRL) {
             throw SinopeBadFormatException.MISSING_FRAME_CTRL;
         }
 
-        int payloadSize = readShort(stream);
-        int command = readShort(stream);
+        int payloadSize = sinopeStream.readUnsignedShort();
+        int command = sinopeStream.readUnsignedShort();
 
         CommandAnswer cmd = COMMANDS.get(command);
         if (cmd == null) {
@@ -59,36 +62,16 @@ public class SinopeDataReader {
 
         JsonObjectBuilder json = Json.createObjectBuilder();
         json.add("command", cmd.getName());
-        cmd.readAnswer(stream, json);
+        cmd.readAnswer(sinopeStream, json);
         return json.build();
     }
 
     /**
-     * Reads a little endian unsigned short and convert it to big endian.
-     * 
-     * @param stream The stream to read from.
-     * @return The unsigned short.
-     * @throws IOException Error when reading.
+     * @param cmds The commands map to fill
+     * @param cmd The command to add
      */
-    public static int readShort(DataInputStream stream) throws IOException {
-        return (Integer.reverseBytes(stream.readUnsignedShort()) >>> 16) & 0xFFFF;
-    }
-
-    /**
-     * Reads a little endian unsigned long and convert it to big endian.
-     * 
-     * @param stream The stream to read from.
-     * @return The unsigned long.
-     * @throws IOException Error when reading.
-     */
-    public static BigInteger readLong(DataInputStream stream) throws IOException {
-        byte[] bytes = new byte[8];
-
-        for (int i = bytes.length - 1; i >= 0; i--) {
-            bytes[i] = stream.readByte();
-        }
-
-        return new BigInteger(bytes);
+    private static void supportCommand(Map<Integer, CommandAnswer> cmds, CommandAnswer cmd) {
+        cmds.put(cmd.getCommandId(), cmd);
     }
 
     /**
@@ -97,7 +80,9 @@ public class SinopeDataReader {
     private static final Map<Integer, CommandAnswer> COMMANDS;
     static {
         Map<Integer, CommandAnswer> cmd = new HashMap<>();
-        cmd.put(DatalessAnswer.PING_CMD.getCommandId(), DatalessAnswer.PING_CMD);
+        supportCommand(cmd, DatalessAnswer.PING_CMD);
+        supportCommand(cmd, new KeyAnswer());
+        supportCommand(cmd, new LoginAnswer());
 
         COMMANDS = Collections.unmodifiableMap(cmd);
     }
