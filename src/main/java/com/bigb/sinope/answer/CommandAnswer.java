@@ -6,6 +6,20 @@ import javax.json.JsonObjectBuilder;
 import com.bigb.sinope.Command;
 import com.bigb.sinope.SinopeBadFormatException;
 
+/**
+ * Extension of a {@link Command} for Sinope answers.
+ * 
+ * @author Francis Beaule
+ *
+ */
 public interface CommandAnswer extends Command {
+    /**
+     * Reads a data stream a fills a JSON object from the content.
+     * 
+     * @param stream The stream to read from.
+     * @param json The JSON object builder to fill.
+     * @throws IOException Error during writing.
+     * @throws SinopeBadFormatException Content is not in the expected format.
+     */
     void readAnswer(DataInputStream stream, JsonObjectBuilder json) throws IOException, SinopeBadFormatException;
 }

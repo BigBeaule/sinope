@@ -7,9 +7,21 @@ import javax.json.JsonObjectBuilder;
 import com.bigb.sinope.SinopeBadFormatException;
 import com.bigb.sinope.SinopeDataReader;
 
+/**
+ * Answer to retrieve an authentication key.
+ * 
+ * @author Francis Beaule
+ *
+ */
 public class KeyAnswer extends AbstractAnswer {
+    /**
+     * The status field.
+     */
     private static final String STATUS = "status";
 
+    /**
+     * Default constructor.
+     */
     public KeyAnswer() {
         super("Authentication Key");
     }

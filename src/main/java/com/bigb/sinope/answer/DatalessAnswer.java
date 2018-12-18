@@ -4,11 +4,27 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import javax.json.JsonObjectBuilder;
 
+/**
+ * Answers that doesn't contains any application data.
+ * 
+ * @author Francis Beaule
+ *
+ */
 public final class DatalessAnswer extends AbstractAnswer {
+    /**
+     * The Ping answer.
+     */
     public static final CommandAnswer PING_CMD = new DatalessAnswer("Ping", 0x0013);
 
+    /**
+     * The unsigned short command ID.
+     */
     private final int cmdId;
 
+    /**
+     * @param name The command name for logging purpose.
+     * @param cmdId The unsigned short command ID.
+     */
     private DatalessAnswer(String name, int cmdId) {
         super(name);
         this.cmdId = cmdId;
