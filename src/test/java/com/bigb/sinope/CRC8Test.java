@@ -1,10 +1,9 @@
 package com.bigb.sinope;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+import junit.framework.TestCase;
 
-public class CRC8Test {
+public class CRC8Test extends TestCase {
 	@Test
 	public void testCRC() {
 		CRC8 crc = new CRC8();

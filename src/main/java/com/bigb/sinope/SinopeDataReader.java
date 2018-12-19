@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import com.bigb.sinope.answer.CommandAnswer;
 import com.bigb.sinope.answer.DatalessAnswer;
 import com.bigb.sinope.answer.KeyAnswer;
@@ -30,6 +28,7 @@ public class SinopeDataReader {
      */
     public static JsonObject read(DataInputStream stream) throws IOException, SinopeBadFormatException {
         SinopeDataInputStream sinopeStream = new SinopeDataInputStream(stream);
+        // TODO Needs to be able to reuse the stream when a SinopeBadFormatException occurs...
 
         /*-
          Command message content is:
@@ -46,7 +45,7 @@ public class SinopeDataReader {
         if (sinopeStream.readByte() != SinopeConstants.FRAME_CTRL) {
             throw SinopeBadFormatException.MISSING_FRAME_CTRL;
         }
-
+        
         int payloadSize = sinopeStream.readUnsignedShort();
         int command = sinopeStream.readUnsignedShort();
 
@@ -60,10 +59,14 @@ public class SinopeDataReader {
                     "Expected payload size of " + cmd.getPayloadSize() + " instead got " + payloadSize);
         }
 
-        JsonObjectBuilder json = Json.createObjectBuilder();
-        json.add("command", cmd.getName());
+        JsonObjectWriter json = new JsonObjectWriter();
+        json.add(JsonFields.CMD, cmd.getName());
         cmd.readAnswer(sinopeStream, json);
-        return json.build();
+        
+        // Skip CRC-8
+        sinopeStream.skip(1);
+        
+        return json.complete();
     }
 
     /**

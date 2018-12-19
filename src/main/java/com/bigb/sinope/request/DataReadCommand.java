@@ -123,6 +123,6 @@ public final class DataReadCommand extends AbstractRequest {
      * @return The {@link DataReadCommand}.
      */
     public static DataReadCommand newRoomLoadValue(long sequenceId, long deviceId) {
-        return new DataReadCommand("Read Room Heat Level", sequenceId, deviceId, 0x0D00);
+        return new DataReadCommand("Read Room Load Value", sequenceId, deviceId, 0x0D00);
     }
 }

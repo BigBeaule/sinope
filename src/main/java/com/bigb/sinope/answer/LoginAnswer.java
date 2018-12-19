@@ -1,9 +1,9 @@
 package com.bigb.sinope.answer;
 
 import java.io.IOException;
-import javax.json.JsonObjectBuilder;
+import com.bigb.sinope.JsonFields;
+import com.bigb.sinope.JsonObjectWriter;
 import com.bigb.sinope.SinopeBadFormatException;
-import com.bigb.sinope.SinopeConstants;
 import com.bigb.sinope.SinopeDataInputStream;
 
 /**
@@ -31,17 +31,17 @@ public class LoginAnswer extends AbstractAnswer {
     }
 
     @Override
-    public void readAnswer(SinopeDataInputStream stream, JsonObjectBuilder json)
+    public void readAnswer(SinopeDataInputStream stream, JsonObjectWriter json)
             throws IOException, SinopeBadFormatException {
 
         byte status = stream.readByte();
         switch (status) {
             case 0:
                 stream.skip(2); // Skip the backoff
-                json.add(SinopeConstants.STATUS, "success");
-                json.add("version.major", stream.readUnsignedByte());
-                json.add("version.minor", stream.readUnsignedByte());
-                json.add("version.update", stream.readUnsignedByte());
+                json.add(JsonFields.STATUS, "success");
+                json.add(JsonFields.VERSION_MAJOR, stream.readUnsignedByte());
+                json.add(JsonFields.VERSION_MINOR, stream.readUnsignedByte());
+                json.add(JsonFields.VERSION_UPDATE, stream.readUnsignedByte());
                 break;
             case -1:
                 readFailure(stream, json, "failed");
@@ -57,8 +57,10 @@ public class LoginAnswer extends AbstractAnswer {
                 break;
             default:
                 throw new SinopeBadFormatException("Invalid status value " + status);
-
         }
+        
+        // Skipping the device ID
+        stream.skip(4);
     }
 
     /**
@@ -69,10 +71,10 @@ public class LoginAnswer extends AbstractAnswer {
      * @param reason The failure reason
      * @throws IOException Error during reading.
      */
-    private static void readFailure(SinopeDataInputStream stream, JsonObjectBuilder json, String reason)
+    private static void readFailure(SinopeDataInputStream stream, JsonObjectWriter json, String reason)
             throws IOException {
 
-        json.add(SinopeConstants.STATUS, reason);
-        json.add("timeout", stream.readUnsignedShort());
+        json.add(JsonFields.STATUS, reason);
+        json.add(JsonFields.TIMEOUT, stream.readUnsignedShort());
     }
 }

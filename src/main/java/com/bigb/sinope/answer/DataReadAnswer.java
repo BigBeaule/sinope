@@ -1,11 +1,13 @@
 package com.bigb.sinope.answer;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.json.JsonObjectBuilder;
+import com.bigb.sinope.JsonFields;
+import com.bigb.sinope.JsonObjectWriter;
 import com.bigb.sinope.SinopeBadFormatException;
-import com.bigb.sinope.SinopeConstants;
 import com.bigb.sinope.SinopeDataInputStream;
+import com.bigb.sinope.request.DataReadCommand;
 
 /**
  * Base implementation of a request reading data from a device.
@@ -27,7 +29,7 @@ public final class DataReadAnswer extends AbstractAnswer {
     /**
      * The name of the value field in the JSON object.
      */
-    private final String field;
+    private final JsonFields field;
 
     /**
      * The value handler.
@@ -37,10 +39,10 @@ public final class DataReadAnswer extends AbstractAnswer {
     /**
      * @param name The command name for logging and answer purpose.
      */
-    private DataReadAnswer(String name, String field, short resultSize, ValueHandler valueHandler) {
+    private DataReadAnswer(String name, JsonFields field, int resultSize, ValueHandler valueHandler) {
         super(name);
         this.field = field;
-        this.resultSize = resultSize;
+        this.resultSize = (short) resultSize;
         this.valueHandler = valueHandler;
         this.appDataSize = (short) (this.resultSize + 5);
     }
@@ -49,24 +51,24 @@ public final class DataReadAnswer extends AbstractAnswer {
     public final int getCommandId() {
         return 0x0241;
     }
-    
+
     @Override
     protected int getDataSize() {
         return 12 + this.appDataSize;
     }
 
     @Override
-    public void readAnswer(SinopeDataInputStream stream, JsonObjectBuilder json)
+    public void readAnswer(SinopeDataInputStream stream, JsonObjectWriter json)
             throws IOException, SinopeBadFormatException {
 
-        json.add("sequence", stream.readUnsignedInt());
-        json.add(SinopeConstants.STATUS, stream.readByte());
+        json.add(JsonFields.SEQUENCE, stream.readUnsignedInt());
+        json.add(JsonFields.STATUS, stream.readByte());
 
         // Skip the attempt number as per documentation.
         stream.skip(1);
 
-        json.add("hasMore", stream.readByte() == 1);
-        json.add("deviceId", stream.readUnsignedInt());
+        json.add(JsonFields.MORE, stream.readByte() == 1);
+        json.add(JsonFields.DEV_ID, stream.readUnsignedInt());
 
         short aSize = stream.readUnsignedByte();
         if (this.appDataSize != aSize) {
@@ -85,6 +87,44 @@ public final class DataReadAnswer extends AbstractAnswer {
     }
 
     /**
+     * Creates a new {@link DataReadAnswer} to read a room temperature.
+     * 
+     * @return The {@link DataReadCommand}.
+     */
+    public static DataReadAnswer newReadRoomTemperature() {
+        return new DataReadAnswer("Read Room Temperature", JsonFields.TEMPERATURE, 2,
+                v -> new BigDecimal(v.doubleValue() / 100.0));
+    }
+
+    /**
+     * Creates a new {@link DataReadAnswer} to read a room set point (I.E. desired temperature).
+     * 
+     * @return The {@link DataReadCommand}.
+     */
+    public static DataReadAnswer newReadRoomSetPoint() {
+        return new DataReadAnswer("Read Room Set Point", JsonFields.SET_POINT, 2,
+                v -> new BigDecimal(v.doubleValue() / 100.0));
+    }
+
+    /**
+     * Creates a new {@link DataReadAnswer} to read a room heat level.
+     * 
+     * @return The {@link DataReadCommand}.
+     */
+    public static DataReadAnswer newRoomHeatLevel() {
+        return new DataReadAnswer("Read Room Heat Level", JsonFields.HEAT_LVL, 1, v -> new BigDecimal(v));
+    }
+
+    /**
+     * Creates a new {@link DataReadAnswer} to read a room load value.
+     * 
+     * @return The {@link DataReadCommand}.
+     */
+    public static DataReadAnswer newRoomLoadValue() {
+        return new DataReadAnswer("Read Room Load Value", JsonFields.LOAD, 2, v -> new BigDecimal(v));
+    }
+
+    /**
      * Interface describing a handler for the value.
      * 
      * @author Francis Beaule
@@ -95,6 +135,6 @@ public final class DataReadAnswer extends AbstractAnswer {
          * @param value The answer value
          * @return The value to return
          */
-        long handleValue(BigInteger value);
+        BigDecimal handleValue(BigInteger value);
     }
 }

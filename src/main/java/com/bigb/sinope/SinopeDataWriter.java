@@ -75,9 +75,10 @@ public class SinopeDataWriter {
         byte[] bytes = value.toByteArray();
         ArrayUtils.reverse(bytes);
 
-        for (byte b : bytes) {
-            this.content.write(b);
-            this.crc.updateCrc((short) b);
+        // Forcing a stop after 8 bytes since the byte array can have 9 entries when negative
+        for (int i = 0; i < 8; i++) {
+            this.content.write(bytes[i]);
+            this.crc.updateCrc((short) bytes[i]);
         }
     }
 

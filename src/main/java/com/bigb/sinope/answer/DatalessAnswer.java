@@ -1,7 +1,7 @@
 package com.bigb.sinope.answer;
 
 import java.io.IOException;
-import javax.json.JsonObjectBuilder;
+import com.bigb.sinope.JsonObjectWriter;
 import com.bigb.sinope.SinopeDataInputStream;
 
 /**
@@ -41,7 +41,7 @@ public final class DatalessAnswer extends AbstractAnswer {
     }
 
     @Override
-    public void readAnswer(SinopeDataInputStream stream, JsonObjectBuilder json) throws IOException {
+    public void readAnswer(SinopeDataInputStream stream, JsonObjectWriter json) throws IOException {
         // Nothing to read
     }
 }
