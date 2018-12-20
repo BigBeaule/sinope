@@ -27,19 +27,8 @@ public abstract class AbstractCommand implements Command {
         this.name = name;
     }
 
-    /**
-     * @return The unsigned short size of the payload data.
-     */
-    protected abstract int getDataSize();
-
     @Override
     public final String getName() {
         return this.name;
-    }
-
-    @Override
-    public final int getPayloadSize() {
-        // Payload size include the command size
-        return 2 + this.getDataSize();
     }
 }

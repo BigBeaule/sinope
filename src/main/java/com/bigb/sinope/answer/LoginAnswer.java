@@ -24,10 +24,10 @@ public class LoginAnswer extends AbstractAnswer {
     public int getCommandId() {
         return 0x0111;
     }
-
+    
     @Override
-    protected int getDataSize() {
-        return 11;
+    public boolean isAnswerPayloadSizeValid(int payloadSize) {
+        return payloadSize == 11;
     }
 
     @Override

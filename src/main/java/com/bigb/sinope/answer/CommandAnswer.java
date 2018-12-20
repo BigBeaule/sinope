@@ -14,6 +14,14 @@ import com.bigb.sinope.SinopeDataInputStream;
  */
 public interface CommandAnswer extends Command {
     /**
+     * Checks if the payload size is valid for this type of answer.
+     * 
+     * @param payloadSize The answer payload size unsigned short.
+     * @return True if valid and false otherwise.
+     */
+    boolean isPayloadSizeValid(int payloadSize);
+
+    /**
      * Reads a data stream a fills a JSON object from the content.
      * 
      * @param stream The stream to read from.

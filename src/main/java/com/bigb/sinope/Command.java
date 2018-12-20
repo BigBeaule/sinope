@@ -16,9 +16,4 @@ public interface Command {
      * @return The command identification unsigned short.
      */
     int getCommandId();
-
-    /**
-     * @return The command payload size unsigned short.
-     */
-    int getPayloadSize();
 }

@@ -11,6 +11,13 @@ public class CRC8 {
      * The current CRC value.
      */
     private short crc = 0;
+    
+    /**
+     * Reset the CRC-8.
+     */
+    public void reset() {
+        this.crc = 0;
+    }
 
     /**
      * Update the CRC with a new byte.

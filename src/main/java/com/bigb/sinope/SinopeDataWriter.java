@@ -26,7 +26,7 @@ public class SinopeDataWriter {
     /**
      * @param stream The stream in which to write
      */
-    public SinopeDataWriter(OutputStream stream) {
+    SinopeDataWriter(OutputStream stream) {
         this.content = new DataOutputStream(stream);
     }
 
@@ -61,7 +61,7 @@ public class SinopeDataWriter {
      */
     public void writeInt(long value) throws IOException {
         long reversedValue = Long.reverseBytes(value) >> 32;
-        this.content.write((int) reversedValue);
+        this.content.writeInt((int) reversedValue);
         this.crc.updateCrc(reversedValue);
     }
 
@@ -88,7 +88,11 @@ public class SinopeDataWriter {
      * @throws IOException Error when writing.
      */
     public void complete() throws IOException {
-        this.content.write(this.crc.getCrc());
-        this.content.flush();
+        try {
+            this.content.write(this.crc.getCrc());
+            this.content.flush();
+        } finally {
+            this.crc.reset();
+        }
     }
 }

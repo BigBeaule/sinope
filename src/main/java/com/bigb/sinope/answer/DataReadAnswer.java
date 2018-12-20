@@ -3,11 +3,13 @@ package com.bigb.sinope.answer;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import com.bigb.sinope.JsonFields;
 import com.bigb.sinope.JsonObjectWriter;
 import com.bigb.sinope.SinopeBadFormatException;
 import com.bigb.sinope.SinopeDataInputStream;
-import com.bigb.sinope.request.DataReadCommand;
 
 /**
  * Base implementation of a request reading data from a device.
@@ -17,34 +19,15 @@ import com.bigb.sinope.request.DataReadCommand;
  */
 public final class DataReadAnswer extends AbstractAnswer {
     /**
-     * The unsigned short data size.
+     * The supported data types.
      */
-    private final short resultSize;
+    private static final Map<Long, DataInfo> DATA_TYPES;
 
     /**
-     * The unsigned short data size.
+     * Default constructor.
      */
-    private final short appDataSize;
-
-    /**
-     * The name of the value field in the JSON object.
-     */
-    private final JsonFields field;
-
-    /**
-     * The value handler.
-     */
-    private final ValueHandler valueHandler;
-
-    /**
-     * @param name The command name for logging and answer purpose.
-     */
-    private DataReadAnswer(String name, JsonFields field, int resultSize, ValueHandler valueHandler) {
-        super(name);
-        this.field = field;
-        this.resultSize = (short) resultSize;
-        this.valueHandler = valueHandler;
-        this.appDataSize = (short) (this.resultSize + 5);
+    public DataReadAnswer() {
+        super("Data Read Answer");
     }
 
     @Override
@@ -53,8 +36,8 @@ public final class DataReadAnswer extends AbstractAnswer {
     }
 
     @Override
-    protected int getDataSize() {
-        return 12 + this.appDataSize;
+    public boolean isAnswerPayloadSizeValid(int payloadSize) {
+        return payloadSize >= 12 ? true : false;
     }
 
     @Override
@@ -71,57 +54,64 @@ public final class DataReadAnswer extends AbstractAnswer {
         json.add(JsonFields.DEV_ID, stream.readUnsignedInt());
 
         short aSize = stream.readUnsignedByte();
-        if (this.appDataSize != aSize) {
-            throw new SinopeBadFormatException(
-                    "Expected application data size of " + this.appDataSize + " instead got " + aSize);
+        if (aSize > 0) {
+            long dataId = stream.readUnsignedInt();
+            DataInfo dataInfo = DATA_TYPES.get(dataId);
+
+            if (dataInfo == null) {
+                throw new SinopeBadFormatException("Unexpected data type %s", dataId);
+            }
+
+            short dataSize = stream.readUnsignedByte();
+            if (dataInfo.resultSize != dataSize) {
+                throw new SinopeBadFormatException("Expected data size of " + dataInfo.resultSize + " for data ID "
+                        + Long.toHexString(dataId) + " instead got " + dataSize);
+            }
+
+            json.add(JsonFields.TYPE, dataInfo.dataType);
+            json.add(dataInfo.field, dataInfo.valueHandler.handleValue(stream.readBytes(dataInfo.resultSize)));
         }
+    }
 
-        long dataId = stream.readUnsignedInt();
-        short dataSize = stream.readUnsignedByte();
-        if (this.resultSize != dataSize) {
-            throw new SinopeBadFormatException("Expected data size of " + this.resultSize + " for data ID "
-                    + Long.toHexString(dataId) + " instead got " + dataSize);
+    /**
+     * The supported data information.
+     * 
+     * @author Francis Beaule
+     *
+     */
+    private static class DataInfo {
+        /**
+         * The data type.
+         */
+        private final String dataType;
+
+        /**
+         * The unsigned short data size.
+         */
+        private final short resultSize;
+
+        /**
+         * The name of the value field in the JSON object.
+         */
+        private final JsonFields field;
+
+        /**
+         * The value handler.
+         */
+        private final ValueHandler valueHandler;
+
+        /**
+         * @param dataType The data type
+         * @param field The field in the JSON
+         * @param resultSize The result size
+         * @param valueHandler The value handler
+         */
+        private DataInfo(String dataType, JsonFields field, int resultSize, ValueHandler valueHandler) {
+            this.field = field;
+            this.dataType = dataType;
+            this.resultSize = (short) resultSize;
+            this.valueHandler = valueHandler;
         }
-
-        json.add(this.field, this.valueHandler.handleValue(stream.readBytes(this.resultSize)));
-    }
-
-    /**
-     * Creates a new {@link DataReadAnswer} to read a room temperature.
-     * 
-     * @return The {@link DataReadCommand}.
-     */
-    public static DataReadAnswer newReadRoomTemperature() {
-        return new DataReadAnswer("Read Room Temperature", JsonFields.TEMPERATURE, 2,
-                v -> new BigDecimal(v.doubleValue() / 100.0));
-    }
-
-    /**
-     * Creates a new {@link DataReadAnswer} to read a room set point (I.E. desired temperature).
-     * 
-     * @return The {@link DataReadCommand}.
-     */
-    public static DataReadAnswer newReadRoomSetPoint() {
-        return new DataReadAnswer("Read Room Set Point", JsonFields.SET_POINT, 2,
-                v -> new BigDecimal(v.doubleValue() / 100.0));
-    }
-
-    /**
-     * Creates a new {@link DataReadAnswer} to read a room heat level.
-     * 
-     * @return The {@link DataReadCommand}.
-     */
-    public static DataReadAnswer newRoomHeatLevel() {
-        return new DataReadAnswer("Read Room Heat Level", JsonFields.HEAT_LVL, 1, v -> new BigDecimal(v));
-    }
-
-    /**
-     * Creates a new {@link DataReadAnswer} to read a room load value.
-     * 
-     * @return The {@link DataReadCommand}.
-     */
-    public static DataReadAnswer newRoomLoadValue() {
-        return new DataReadAnswer("Read Room Load Value", JsonFields.LOAD, 2, v -> new BigDecimal(v));
     }
 
     /**
@@ -136,5 +126,24 @@ public final class DataReadAnswer extends AbstractAnswer {
          * @return The value to return
          */
         BigDecimal handleValue(BigInteger value);
+    }
+
+    /**
+     * {@link ValueHandler} to convert hundreds of Celsius to Celsius.
+     */
+    private static final ValueHandler CELSIUS = v -> new BigDecimal(v.doubleValue() / 100.0);
+
+    /**
+     * {@link ValueHandler} to keep the value as is.
+     */
+    private static final ValueHandler NO_OP = v -> new BigDecimal(v);
+
+    static {
+        Map<Long, DataInfo> map = new HashMap<>();
+        map.put(0x0203L, new DataInfo("Read Room Temperature", JsonFields.TEMPERATURE, 2, CELSIUS));
+        map.put(0x0208L, new DataInfo("Read Room Set Point", JsonFields.SET_POINT, 2, CELSIUS));
+        map.put(0x0220L, new DataInfo("Read Room Heat Level", JsonFields.HEAT_LVL, 1, NO_OP));
+        map.put(0x0D00L, new DataInfo("Read Room Load Value", JsonFields.LOAD, 2, NO_OP));
+        DATA_TYPES = Collections.unmodifiableMap(map);
     }
 }

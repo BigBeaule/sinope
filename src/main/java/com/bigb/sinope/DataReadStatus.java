@@ -1,4 +1,4 @@
-package com.bigb.sinope.answer;
+package com.bigb.sinope;
 
 /**
  * The supported data read statuses.

@@ -34,10 +34,10 @@ public final class DatalessAnswer extends AbstractAnswer {
     public int getCommandId() {
         return this.cmdId;
     }
-
+    
     @Override
-    protected int getDataSize() {
-        return 0;
+    public boolean isAnswerPayloadSizeValid(int payloadSize) {
+        return payloadSize == 0;
     }
 
     @Override

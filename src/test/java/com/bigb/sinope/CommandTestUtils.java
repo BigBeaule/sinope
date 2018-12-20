@@ -10,9 +10,9 @@ import com.bigb.sinope.request.CommandRequest;
 import junit.framework.TestCase;
 
 public class CommandTestUtils extends TestCase {
-    protected byte[] runRequest(CommandRequest cmd) {
+    protected static byte[] runRequest(CommandRequest cmd) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            cmd.sendRequest(baos);
+            cmd.sendRequest(new SinopeDataWriter(baos));
             return baos.toByteArray();
         } catch (Exception e) {
             e.printStackTrace();
@@ -20,7 +20,7 @@ public class CommandTestUtils extends TestCase {
         }
     }
 
-    protected JsonObject readAnswer(CommandAnswer cmd, byte[] data) {
+    protected static JsonObject readAnswer(CommandAnswer cmd, byte[] data) {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
                 DataInputStream stream = new DataInputStream(bais);) {
 
@@ -36,12 +36,12 @@ public class CommandTestUtils extends TestCase {
     protected void validateByte(byte[] content, int pos, int value) {
         assertEquals(value, Byte.toUnsignedInt(content[pos]));
     }
-    
+
     protected void validateShort(byte[] content, int pos, int value) {
         byte[] bytes = new byte[2];
         bytes[0] = content[pos + 1];
         bytes[1] = content[pos];
-        
+
         assertEquals(value, new BigInteger(bytes).intValue());
     }
 

@@ -61,6 +61,6 @@ public class JsonObjectWriter {
      * @param value The value.
      */
     public void add(JsonFields field, BigDecimal value) {
-        this.json.add(field.getField(), value);
+        this.json.add(field.getField(), value.setScale(2, BigDecimal.ROUND_HALF_UP));
     }
 }

@@ -111,7 +111,7 @@ public final class DataReadCommand extends AbstractRequest {
      * @param deviceId The unsigned integer device ID.
      * @return The {@link DataReadCommand}.
      */
-    public static DataReadCommand newRoomHeatLevel(long sequenceId, long deviceId) {
+    public static DataReadCommand newReadRoomHeatLevel(long sequenceId, long deviceId) {
         return new DataReadCommand("Read Room Heat Level", sequenceId, deviceId, 0x0220);
     }
     
@@ -122,7 +122,7 @@ public final class DataReadCommand extends AbstractRequest {
      * @param deviceId The unsigned integer device ID.
      * @return The {@link DataReadCommand}.
      */
-    public static DataReadCommand newRoomLoadValue(long sequenceId, long deviceId) {
+    public static DataReadCommand newReadRoomLoadValue(long sequenceId, long deviceId) {
         return new DataReadCommand("Read Room Load Value", sequenceId, deviceId, 0x0D00);
     }
 }

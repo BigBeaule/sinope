@@ -25,10 +25,10 @@ public class KeyAnswer extends AbstractAnswer {
     public int getCommandId() {
         return 0x010B;
     }
-
+    
     @Override
-    protected int getDataSize() {
-        return 11;
+    public boolean isAnswerPayloadSizeValid(int payloadSize) {
+        return payloadSize == 11;
     }
 
     @Override

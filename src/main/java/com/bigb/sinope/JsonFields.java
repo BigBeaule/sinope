@@ -12,6 +12,7 @@ public enum JsonFields {
     SET_POINT("setPoint"), //
     HEAT_LVL("heatLevel"), //
     LOAD("load"), //
+    TYPE("type"), //
 
     /** Properties **/
     SEQUENCE("sequence"), //

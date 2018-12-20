@@ -27,20 +27,31 @@ public class SinopeBadFormatException extends Exception {
             new SinopeBadFormatException("Missing frame controle (0x00) as second byte!");
 
     /**
-     * @param msg The message exception
+     * @param msg The exception message
      */
     public SinopeBadFormatException(String msg) {
         super(msg);
     }
 
     /**
-     * @param msg
-     * @param hexValue
+     * @param msg The exception message
+     * @param hexValue The hex value to display in the message in a pretty format
      */
     public SinopeBadFormatException(String msg, int hexValue) {
         this(String.format(msg,
-                Integer.toHexString(hexValue).length() == 1
+                "0x" + (Integer.toHexString(hexValue).length() == 1
                         ? "0" + Integer.toHexString(hexValue).toUpperCase(Locale.ENGLISH)
-                        : Integer.toHexString(hexValue).toUpperCase(Locale.ENGLISH)));
+                        : Integer.toHexString(hexValue).toUpperCase(Locale.ENGLISH))));
+    }
+
+    /**
+     * @param msg The exception message
+     * @param hexValue The hex value to display in the message in a pretty format
+     */
+    public SinopeBadFormatException(String msg, long hexValue) {
+        this(String.format(msg,
+                "0x" + (Long.toHexString(hexValue).length() == 1
+                        ? "0" + Long.toHexString(hexValue).toUpperCase(Locale.ENGLISH)
+                        : Long.toHexString(hexValue).toUpperCase(Locale.ENGLISH))));
     }
 }
