@@ -1,5 +1,6 @@
 package com.bigb.sinope.request;
 
+import com.bigb.sinope.SinopeCommand;
 import com.bigb.sinope.SinopeDataWriter;
 
 /**
@@ -12,7 +13,7 @@ public final class DatalessRequest extends AbstractRequest {
     /**
      * The Ping request.
      */
-    public static final CommandRequest PING_CMD = new DatalessRequest("Ping", 0x0012);
+    public static final CommandRequest PING_CMD = new DatalessRequest(SinopeCommand.PING, 0x0012);
 
     /**
      * The unsigned short command ID.
@@ -20,10 +21,10 @@ public final class DatalessRequest extends AbstractRequest {
     private final int cmdId;
 
     /**
-     * @param name The command name for logging purpose.
+     * @param name The {@link SinopeCommand}.
      * @param cmdId The unsigned short command ID.
      */
-    private DatalessRequest(String name, int cmdId) {
+    private DatalessRequest(SinopeCommand name, int cmdId) {
         super(name);
         this.cmdId = cmdId;
     }

@@ -5,6 +5,7 @@ import java.util.Locale;
 import com.bigb.sinope.JsonFields;
 import com.bigb.sinope.JsonObjectWriter;
 import com.bigb.sinope.SinopeBadFormatException;
+import com.bigb.sinope.SinopeCommand;
 import com.bigb.sinope.SinopeDataInputStream;
 
 /**
@@ -18,7 +19,7 @@ public class KeyAnswer extends AbstractAnswer {
      * Default constructor.
      */
     public KeyAnswer() {
-        super("Authentication Key");
+        super(SinopeCommand.AUTH_KEY);
     }
 
     @Override

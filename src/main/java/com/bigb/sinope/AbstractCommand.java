@@ -10,25 +10,30 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractCommand implements Command {
-    /**
-     * The logger.
-     */
-    protected static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
-    
-    /**
-     * The command name for logging and answer purpose.
-     */
-    private final String name;
+	/**
+	 * The logger.
+	 */
+	protected static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 
-    /**
-     * @param name The command name for logging and answer purpose.
-     */
-    public AbstractCommand(String name) {
-        this.name = name;
-    }
+	/**
+	 * The {@link SinopeCommand}.
+	 */
+	private final SinopeCommand name;
 
-    @Override
-    public final String getName() {
-        return this.name;
-    }
+	/**
+	 * @param name The {@link SinopeCommand}.
+	 */
+	public AbstractCommand(SinopeCommand name) {
+		this.name = name;
+	}
+
+	@Override
+	public final String getName() {
+		return this.name.getCommandName();
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + ": " + this.getName();
+	}
 }

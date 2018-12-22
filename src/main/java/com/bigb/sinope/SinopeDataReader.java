@@ -10,6 +10,7 @@ import javax.json.JsonObject;
 import com.bigb.sinope.answer.CommandAnswer;
 import com.bigb.sinope.answer.DataReadAnswer;
 import com.bigb.sinope.answer.DatalessAnswer;
+import com.bigb.sinope.answer.DeviceLinkReport;
 import com.bigb.sinope.answer.KeyAnswer;
 import com.bigb.sinope.answer.LoginAnswer;
 
@@ -99,6 +100,7 @@ public class SinopeDataReader {
         supportCommand(cmd, new KeyAnswer());
         supportCommand(cmd, new LoginAnswer());
         supportCommand(cmd, new DataReadAnswer());
+        supportCommand(cmd, new DeviceLinkReport());
 
         COMMANDS = Collections.unmodifiableMap(cmd);
     }

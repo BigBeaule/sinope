@@ -1,7 +1,9 @@
 package com.bigb.sinope.request;
 
 import java.io.IOException;
+
 import com.bigb.sinope.AbstractCommand;
+import com.bigb.sinope.SinopeCommand;
 import com.bigb.sinope.SinopeConstants;
 import com.bigb.sinope.SinopeDataWriter;
 
@@ -13,9 +15,9 @@ import com.bigb.sinope.SinopeDataWriter;
  */
 public abstract class AbstractRequest extends AbstractCommand implements CommandRequest {
     /**
-     * @param name The command name for logging purpose.
+     * @param name {@link SinopeCommand}.
      */
-    public AbstractRequest(String name) {
+    public AbstractRequest(SinopeCommand name) {
         super(name);
     }
 

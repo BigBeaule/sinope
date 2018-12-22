@@ -8,7 +8,7 @@ package com.bigb.sinope;
  */
 public interface Command {
     /**
-     * @return The command name for logging and answer purpose.
+     * @return The {@link SinopeCommand} name.
      */
     String getName();
 
