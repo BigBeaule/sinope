@@ -125,7 +125,7 @@ public class SinopeConnection {
      * @author Francis Beaule
      *
      */
-    private static interface SinopeConnectionAnswerCallback {
+    public static interface SinopeConnectionAnswerCallback {
         /**
          * @param json The JSON answer object
          */
