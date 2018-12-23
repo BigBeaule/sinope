@@ -58,6 +58,13 @@ public class SinopeConnection {
 	}
 
 	/**
+	 * @return The GT125 host. 
+	 */
+	public String getHost() {
+		return this.host;
+	}
+
+	/**
 	 * Connect to the Sinope gateway (GT125) and start reading on it.
 	 * 
 	 * @param answerCallback The callback for new answers
