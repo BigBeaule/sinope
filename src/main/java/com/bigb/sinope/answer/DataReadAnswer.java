@@ -142,11 +142,11 @@ public final class DataReadAnswer extends AbstractAnswer {
 
 	static {
 		Map<Long, DataInfo> map = new HashMap<>();
-		map.put(0x0203L, new DataInfo(SinopeCommand.ROOM_TEMPERATURE, JsonFields.TEMPERATURE, 2, CELSIUS));
+		map.put(0x0203L, new DataInfo(SinopeCommand.ROOM_TEMPERATURE, JsonFields.ROOM_TEMP, 2, CELSIUS));
 		map.put(0x0208L, new DataInfo(SinopeCommand.ROOM_SET_POINT, JsonFields.SET_POINT, 2, CELSIUS));
 		map.put(0x0220L, new DataInfo(SinopeCommand.ROOM_HEAT_LVL, JsonFields.HEAT_LVL, 1, NO_OP));
 		map.put(0x0D00L, new DataInfo(SinopeCommand.ROOM_LOAD, JsonFields.LOAD, 2, NO_OP));
-		map.put(0x0204L, new DataInfo(SinopeCommand.OUTDOOR_TEMPERATURE, JsonFields.TEMPERATURE, 2, CELSIUS));
+		map.put(0x0204L, new DataInfo(SinopeCommand.OUTDOOR_TEMPERATURE, JsonFields.OUTDOOR_TEMP, 2, CELSIUS));
 		map.put(0x0700L, new DataInfo(SinopeCommand.AWAY_STATUS, JsonFields.AWAY, 1,
 				v -> new BigDecimal(v.intValue() == 2 ? 1 : 0)));
 		

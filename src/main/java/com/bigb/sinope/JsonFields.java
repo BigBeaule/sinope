@@ -8,7 +8,8 @@ package com.bigb.sinope;
  */
 public enum JsonFields {
     /** Answers data value fields **/
-    TEMPERATURE("temperature"), //
+    OUTDOOR_TEMP("outdoorTemperature"), //
+    ROOM_TEMP("roomTemperature"), //
     SET_POINT("setPoint"), //
     HEAT_LVL("heatLevel"), //
     LOAD("load"), //

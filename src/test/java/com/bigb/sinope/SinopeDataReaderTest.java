@@ -93,7 +93,7 @@ public class SinopeDataReaderTest extends CommandTestUtils {
         assertFalse(tempMsg.getBoolean(JsonFields.MORE.getField()));
         assertEquals(DataReadStatus.DATA_ANSWER, DataReadStatus.getStatus(tempMsg.getInt(JsonFields.STATUS.getField())));
         assertEquals(0x0444, tempMsg.getInt(JsonFields.DEV_ID.getField()));
-        assertEquals(19.22, tempMsg.getJsonNumber(JsonFields.TEMPERATURE.getField()).doubleValue(), 0);
+        assertEquals(19.22, tempMsg.getJsonNumber(JsonFields.ROOM_TEMP.getField()).doubleValue(), 0);
         assertEquals("Read Room Temperature", tempMsg.getString(JsonFields.TYPE.getField()));
     }
 }

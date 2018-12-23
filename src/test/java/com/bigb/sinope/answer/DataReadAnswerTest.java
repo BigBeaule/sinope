@@ -28,7 +28,7 @@ public class DataReadAnswerTest extends CommandTestUtils {
                 0x43 // CRC-8
         });
 
-        assertEquals(19.22, json.getJsonNumber(JsonFields.TEMPERATURE.getField()).doubleValue(), 0);
+        assertEquals(19.22, json.getJsonNumber(JsonFields.ROOM_TEMP.getField()).doubleValue(), 0);
         assertEquals("Read Room Temperature", json.getString(JsonFields.TYPE.getField()));
     }
     
