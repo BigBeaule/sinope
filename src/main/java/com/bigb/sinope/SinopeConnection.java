@@ -88,12 +88,8 @@ public class SinopeConnection {
 					LOG.debug("New answer from {}", this.host);
 					answerCallback.newAnswer(answer);
 				} catch (SocketException e) {
-					if (this.socket.isClosed()) {
-						// It's normal then
-						break;
-					}
-					
-					LOG.error("Error while reading", e);
+					// We are closing the connection
+					LOG.trace("Supposed to be a normal error happening only when closing the connection", e);
 				} catch (Throwable t) {
 					LOG.error("Error while reading", t);
 				}
