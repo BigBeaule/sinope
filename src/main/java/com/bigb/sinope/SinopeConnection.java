@@ -3,6 +3,7 @@ package com.bigb.sinope;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,7 +59,7 @@ public class SinopeConnection {
 	}
 
 	/**
-	 * @return The GT125 host. 
+	 * @return The GT125 host.
 	 */
 	public String getHost() {
 		return this.host;
@@ -81,11 +82,18 @@ public class SinopeConnection {
 
 		this.executor = Executors.newSingleThreadExecutor();
 		this.executor.execute(() -> {
-			while (true) {
+			while (!this.socket.isClosed()) {
 				try {
 					JsonObject answer = this.reader.read();
-					LOG.info("New answer from {}", this.host);
+					LOG.debug("New answer from {}", this.host);
 					answerCallback.newAnswer(answer);
+				} catch (SocketException e) {
+					if (this.socket.isClosed()) {
+						// It's normal then
+						break;
+					}
+					
+					LOG.error("Error while reading", e);
 				} catch (Throwable t) {
 					LOG.error("Error while reading", t);
 				}
@@ -104,7 +112,7 @@ public class SinopeConnection {
 			throw new IOException("Not connected");
 		}
 
-		LOG.info("Sending command {} to {}", command.getName(), this.host);
+		LOG.debug("Sending command {} to {}", command.getName(), this.host);
 		command.sendRequest(this.writer);
 	}
 
