@@ -90,6 +90,7 @@ public class SinopeConnection {
 				} catch (SocketException e) {
 					// We are closing the connection
 					LOG.trace("Supposed to be a normal error happening only when closing the connection", e);
+					break;
 				} catch (Throwable t) {
 					LOG.error("Error while reading", t);
 				}
